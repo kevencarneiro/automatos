@@ -1,0 +1,10 @@
+@import "~bulma/sass/utilities/_all";
+
+$modal-background-background-color: bulmaRgba($background, 0.95);
+button.modal-close::before,
+button.modal-close::after {
+  background-color: #0a0a0a;
+}
+
+@import "~bulma";
+@import "~buefy/src/scss/buefy";

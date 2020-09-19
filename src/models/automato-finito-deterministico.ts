@@ -10,7 +10,7 @@ export class AutomatoFinitoDeterministico extends Automato {
 
     if (data == null) data = {};
 
-    this.transicoes = data.transicoes || new Set();
+    this.transicoes = data.transicoes || [];
   }
 
   validarTransicoes(): Validation {

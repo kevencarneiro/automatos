@@ -20,6 +20,12 @@ export abstract class Automato {
 
   public abstract processarCadeia(cadeia: string): boolean;
 
+  public validarEstados(): Validation {
+    return this.estados.size === 0
+      ? { valid: false, message: "o conjunto de estados não pode ser vazio" }
+      : { valid: true };
+  }
+
   public validarEstadoInicial(): Validation {
     if (this.estados.has(this.estadoInicial)) return { valid: true };
     return {
@@ -30,6 +36,12 @@ export abstract class Automato {
 
   public validarEstadosFinais(): Validation {
     const estadosInvalidos: string[] = [];
+    if (this.estadosFinais.size === 0)
+      return {
+        valid: false,
+        message: "Nenhum estado de aceitação foi defidido para o autômato",
+      };
+
     this.estadosFinais.forEach((x) => {
       if (!this.estados.has(x)) estadosInvalidos.push(x);
     });

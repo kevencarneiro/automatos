@@ -1,69 +1,135 @@
 <template>
-  <section>
-    <b-field label="Alfabeto">
-      <b-taginput
-        v-model="alfabeto"
-        ellipsis
-        icon="label"
-        placeholder="Adicione itens ao alfabeto (separado por vírgulas)"
-      />
-    </b-field>
-    <b-field label="Estados">
-      <b-taginput
-        v-model="estados"
-        ellipsis
-        placeholder="Adicione estados (separado por vírgulas)"
-      />
-    </b-field>
-    <b-field label="Estado inicial">
-      <b-select v-model="afn.estadoInicial" :disabled="estados.length === 0">
-        <option v-for="elemento in estados" :value="elemento" :key="elemento">{{ elemento }}</option>
-      </b-select>
-    </b-field>
-    <b-field label="Estados de aceitação">
-      <b-taginput
-        multiple
-        v-model="estadosFinais"
-        :data="estados"
-        autocomplete
-        :allow-new="false"
-        :open-on-focus="true"
-        :disabled="estados.length === 0"
-      />
-    </b-field>
+  <section class="block">
+    <div class="block">
+      <h2 class="subtitle">Autômato Finito Não Determinístico</h2>
+      <b-field label="Alfabeto">
+        <b-taginput
+          :value="Array.from(afn.alfabeto)"
+          @input="(value) => { afn.alfabeto = new Set(value) }"
+          ellipsis
+          placeholder="Adicione itens ao alfabeto (separado por vírgulas)"
+        />
+      </b-field>
+      <b-field
+        label="Estados"
+        :type="validationClass(afn.validarEstados())"
+        :message="afn.validarEstados().message"
+      >
+        <b-taginput
+          :value="Array.from(afn.estados)"
+          @input="(value) => { afn.estados = new Set(value)}"
+          ellipsis
+          placeholder="Adicione estados (separado por vírgulas)"
+        />
+      </b-field>
+      <b-field
+        label="Estado inicial"
+        :type="validationClass(afn.validarEstadoInicial())"
+        :message="afn.validarEstadoInicial().message"
+      >
+        <b-select v-model="afn.estadoInicial" :disabled="afn.estados.size === 0">
+          <option v-for="elemento in afn.estados" :value="elemento" :key="elemento">{{ elemento }}</option>
+        </b-select>
+      </b-field>
+      <b-field
+        label="Estados de aceitação"
+        :type="validationClass(afn.validarEstadosFinais())"
+        :message="afn.validarEstadosFinais().message"
+      >
+        <b-taginput
+          multiple
+          :value="Array.from(afn.estadosFinais)"
+          @input="(value) => { afn.estadosFinais = new Set(value) }"
+          :data="Array.from(afn.estados)"
+          autocomplete
+          :allow-new="false"
+          :open-on-focus="true"
+          :disabled="afn.estados.size === 0"
+        />
+      </b-field>
+    </div>
+
     <Transicoes :automato="afn" />
+    <div class="block"></div>
+    <div v-if="afn && afn.validar().valid" class="box">
+      <h6 class="subtitle is-6">Autômato Gerado</h6>
+
+      <p>M = (Q, Σ, δ, q0, F)</p>
+      <p>Σ: { {{formatarSet(afn.alfabeto)}} }</p>
+      <p>Q: { {{formatarSet(afn.estados)}} }</p>
+      <p>q0: {{afn.estadoInicial}}</p>
+      <p>F: { {{formatarSet(afn.estadosFinais)}} }</p>
+      <!-- <p> -->
+      δ: {
+      <ul style="margin-left: 20px;">
+        <li v-for="item in transicoesFormatadas" :key="item">{{item}}</li>
+      </ul>}
+      <!-- </p> -->
+
+      <TesteCadeia :automato="afn" v-model="cadeia" />
+
+      <b-button @click="converter">Converter em Autômato Finito Determinístico (AFD)</b-button>
+    </div>
   </section>
 </template>
 
 <script lang="ts">
 import { AutomatoFinitoNaoDeterministico } from "@/models/automato-finito-nao-deterministico";
-import { Vue, Component, Watch } from "vue-property-decorator";
+import { Vue, Component, Watch, Prop } from "vue-property-decorator";
 import Transicoes from "@/components/Transicoes.vue";
+import TesteCadeia from "@/components/TesteCadeia.vue";
+import { Validation } from "@/interfaces/validation";
+import AutomatoDeterministico from "./AutomatoDeterministico.vue";
 
 @Component({
   components: {
-    Transicoes
+    Transicoes,
+    TesteCadeia
   }
 })
 export default class AutomatoNaoDeterministico extends Vue {
-  private alfabeto: string[] = [];
-  private estados: string[] = [];
-  private estadosFinais: string[] = [];
-  private afn: AutomatoFinitoNaoDeterministico = new AutomatoFinitoNaoDeterministico();
+  @Prop({
+    required: false,
+    default: () =>
+      new AutomatoFinitoNaoDeterministico({
+        alfabeto: new Set(["0", "1"]),
+        estados: new Set(["q0", "q1", "q2"]),
+        estadoInicial: "q0",
+        estadosFinais: new Set(["q2"]),
+        transicoes: [
+          ["q0", "0", new Set(["q0"])],
+          ["q0", "1", new Set(["q0", "q1"])],
+          ["q1", "0", new Set(["q2"])],
+          ["q1", "1", new Set(["q2"])]
+        ]
+      })
+  })
+  private afn!: AutomatoFinitoNaoDeterministico;
+  @Prop({ required: false, default: "" }) private cadeia!: string;
 
-  @Watch("alfabeto")
-  updateAlfabeto() {
-    this.afn.alfabeto = new Set(this.alfabeto);
+  private get transicoesFormatadas(): string[] {
+    return this.afn.transicoes.map(
+      x => `${x[0]}, ${x[1]} -> {${Array.from(x[2]).join(", ")}}`
+    );
   }
 
-  @Watch("estados")
-  updateEstados() {
-    this.afn.estados = new Set(this.estados);
+  private formatarSet(set: Set<string>): string {
+    return Array.from(set).join(", ");
   }
 
-  @Watch("estadosFinais")
-  updateEstadosFinais() {
-    this.afn.estadosFinais = new Set(this.estadosFinais);
+  private validationClass(validacao: Validation): string {
+    return validacao.valid ? "is-success" : "is-danger";
+  }
+
+  private converter(): void {
+    this.$buefy.modal.open({
+      parent: this,
+      component: AutomatoDeterministico,
+      props: {
+        afd: this.afn.converterParaDeterministico(),
+        cadeia: this.cadeia
+      }
+    });
   }
 }
 </script>

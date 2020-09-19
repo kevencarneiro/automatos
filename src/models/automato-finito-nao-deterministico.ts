@@ -16,7 +16,7 @@ export class AutomatoFinitoNaoDeterministico extends Automato {
 
   validarTransicoes(): Validation {
     const transicoesInvalidas: string[] = [];
-    this.transicoes.forEach((x) => {
+    this.transicoes.forEach((x, idx) => {
       const errosTransicao: string[] = [];
       const origemInvalida: string | undefined = !this.estados.has(x[0])
         ? x[0]
@@ -37,6 +37,17 @@ export class AutomatoFinitoNaoDeterministico extends Automato {
           `a estado de origem ${origemInvalida} não pertence ao conjunto de estados do autômato`
         );
 
+      if (x[2].size === 0)
+        errosTransicao.push("nenhum estado definido como destino");
+
+      if (
+        this.transicoes.some(
+          (t, indexTransicao) =>
+            idx !== indexTransicao && t[0] === x[0] && t[1] === x[1]
+        )
+      )
+        errosTransicao.push("transição duplicada");
+
       if (destinosInvalidos.length > 0)
         errosTransicao.push(
           `o(s) estado(s) de destino {${destinosInvalidos.join(
@@ -47,7 +58,7 @@ export class AutomatoFinitoNaoDeterministico extends Automato {
       if (errosTransicao.length > 0)
         transicoesInvalidas.push(
           `${x[0]}, ${x[1]} -> {${[...x[2]].join(", ")}}: ${errosTransicao.join(
-            ", "
+            "; "
           )}`
         );
     });
