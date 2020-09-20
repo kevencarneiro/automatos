@@ -1,5 +1,5 @@
 <template>
-  <section class="afd">
+  <section class="block">
     <h2 class="subtitle">Autômato Finito Determinístico</h2>
     <b-field label="Alfabeto">
       <b-taginput

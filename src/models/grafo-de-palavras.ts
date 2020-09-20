@@ -2,7 +2,7 @@ import { Automato } from "./automato";
 import { AutomatoFinitoNaoDeterministico } from "./automato-finito-nao-deterministico";
 
 export class GrafoDePalavras {
-  private static FIM_DA_PALAVRA: string = "#";
+  private static FIM_DA_PALAVRA = "#";
   public automato: AutomatoFinitoNaoDeterministico = new AutomatoFinitoNaoDeterministico(
     {
       estadoInicial: "q0",

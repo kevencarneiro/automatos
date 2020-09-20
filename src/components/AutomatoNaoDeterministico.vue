@@ -90,19 +90,7 @@ import AutomatoDeterministico from "./AutomatoDeterministico.vue";
 export default class AutomatoNaoDeterministico extends Vue {
   @Prop({
     required: false,
-    default: () =>
-      new AutomatoFinitoNaoDeterministico({
-        alfabeto: new Set(["0", "1"]),
-        estados: new Set(["q0", "q1", "q2"]),
-        estadoInicial: "q0",
-        estadosFinais: new Set(["q2"]),
-        transicoes: [
-          ["q0", "0", new Set(["q0"])],
-          ["q0", "1", new Set(["q0", "q1"])],
-          ["q1", "0", new Set(["q2"])],
-          ["q1", "1", new Set(["q2"])]
-        ]
-      })
+    default: () => new AutomatoFinitoNaoDeterministico()
   })
   private afn!: AutomatoFinitoNaoDeterministico;
   @Prop({ required: false, default: "" }) private cadeia!: string;
