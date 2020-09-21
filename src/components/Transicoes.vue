@@ -32,12 +32,12 @@
             </b-select>
           </td>
           <td>
-            <b-select v-if="typeof t[2] === 'string'" v-model="t[2]" :disabled="disabled">
+            <b-select v-if="!multiplosDestinos" v-model="t[2]" :disabled="disabled">
               <option v-for="elemento in estados" :value="elemento" :key="elemento">{{ elemento }}</option>
             </b-select>
             <b-taginput
               multiple
-              v-if="typeof t[2] !== 'string'"
+              v-if="multiplosDestinos"
               :value="Array.from(t[2] || [])"
               :data="estados"
               autocomplete
@@ -76,7 +76,7 @@ export default class Transicoes extends Vue {
   }
 
   private get multiplosDestinos(): boolean {
-    return !!(this.automato as AutomatoFinitoDeterministico);
+    return this.automato instanceof AutomatoFinitoNaoDeterministico;
   }
 
   private get estados(): string[] {
@@ -88,7 +88,7 @@ export default class Transicoes extends Vue {
   }
 
   adicionarTransicao() {
-    if (this.multiplosDestinos)
+    if (!this.multiplosDestinos)
       (this.automato as AutomatoFinitoDeterministico).transicoes.push([
         "",
         "",

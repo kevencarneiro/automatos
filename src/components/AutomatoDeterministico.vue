@@ -9,7 +9,11 @@
         placeholder="Adicione itens ao alfabeto (separado por vírgulas)"
       />
     </b-field>
-    <b-field label="Estados">
+    <b-field
+      label="Estados"
+      :type="validationClass(afd.validarEstados())"
+      :message="afd.validarEstados().message"
+    >
       <b-taginput
         :value="Array.from(afd.estados)"
         @input="(value) => { afd.estados = new Set(value)}"
