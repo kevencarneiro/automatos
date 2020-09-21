@@ -2,7 +2,7 @@
   <section class="block">
     <div class="block">
       <h2 class="subtitle">Autômato Finito Não Determinístico</h2>
-      <b-field label="Alfabeto">
+      <b-field label="Alfabeto (para transições espontâneas, digite 'epsilon', sem aspas)">
         <b-taginput
           :value="Array.from(afn.alfabeto)"
           @input="(value) => { afn.alfabeto = new Set(value) }"

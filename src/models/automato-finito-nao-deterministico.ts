@@ -93,6 +93,7 @@ export class AutomatoFinitoNaoDeterministico extends Automato {
       estados.forEach((processado, estado) => {
         if (processado) return;
         this.alfabeto.forEach((elemento) => {
+          if (elemento === Automato.EPSILON) return;
           try {
             const novoEstado = this.realizarTransicao(estado, elemento);
             transicoes.push([estado, elemento, novoEstado]);
@@ -112,7 +113,9 @@ export class AutomatoFinitoNaoDeterministico extends Automato {
     const juntarNomeEstados = (conjunto: Set<string>) =>
       [...conjunto].reduce((previous, current) => previous + current, "");
 
-    afd.alfabeto = new Set([...this.alfabeto]);
+    afd.alfabeto = new Set(
+      [...this.alfabeto].filter((x) => x !== Automato.EPSILON)
+    );
 
     afd.estados = new Set(
       [...estados.keys()].map((conjunto) => juntarNomeEstados(conjunto))
@@ -162,7 +165,8 @@ export class AutomatoFinitoNaoDeterministico extends Automato {
       (t) => estados.has(t[0]) && t[1] == elemento
     );
 
-    if (!transicoesAtuais) throw new Error("Transicao Inválida");
+    if (!transicoesAtuais || transicoesAtuais.length === 0)
+      throw new Error("Transicao Inválida");
 
     estados = transicoesAtuais
       .map((t) => t[2])
