@@ -2,7 +2,7 @@
 
 [https://kevencarneiro.github.io/automatos/](https://kevencarneiro.github.io/automatos/)
 
-Esta é uma ferramenta on-line para a criação de Autômatos Finitos Determinísticos (AFD ou DFA) e Autômatos Finitos Não-Determinísticos (AFN ou NFA).
+Esta é uma ferramenta on-line para a criação de Autômatos Finitos Determinísticos (AFD ou DFA) e Autômatos Finitos Não-Determinísticos (AFN ou NFA). Também é possível converter um AFN para AFD e vice-versa.
 
 Para a utilização é necessário apenas clicar no link acima, a ferramenta é inteiramente on-line e não requer a instalação de nenhum programa, apenas se certifique que o seu navegador está atualizado.
 
@@ -10,7 +10,7 @@ Para a utilização é necessário apenas clicar no link acima, a ferramenta é 
 
 Issues e pull requests são bem-vindos aqui :D
 
-As tecnologias utilizadas nesse projeto são
+As tecnologias utilizadas nesse projeto são:
 
 - Typescript
 - VueJs
